@@ -1,5 +1,7 @@
 var express = require( 'express' ),
     app     = express(),
+
+    onPostUser = require( './apis/onPostUser' ),
     
     port = 60080;
 
@@ -18,11 +20,7 @@ app.get( '/user/:id', function( req, res ) {
 /**
  * ユーザー登録API
  */
-app.post( '/user', function( req, res ) {
-
-    console.log( req.body );
-    console.log( '%s %s', req.method, req.url );
-} );
+app.post( '/user', onPostUser );
 
 /**
  * ユーザー情報更新API
