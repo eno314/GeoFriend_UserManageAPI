@@ -3,13 +3,11 @@ var express = require( 'express' ),
     
     port = 60080;
 
-/**
- * $B%j%/%(%9%H(Bbody$B$r%Q!<%9$9$k$?$a$N%b%8%e!<%k%;%C%H(B
- */
+// bodyのパース用モジュール
 app.use( express.bodyParser() );
 
 /**
- * $B%f!<%6!<>pJs<hF@(BAPI
+ * ユーザー情報参照API
  */
 app.get( '/user/:id', function( req, res ) {
 
@@ -18,7 +16,7 @@ app.get( '/user/:id', function( req, res ) {
 } );
 
 /**
- * $B%f!<%6!<EPO?(BAPI
+ * ユーザー登録API
  */
 app.post( '/user', function( req, res ) {
 
@@ -27,7 +25,7 @@ app.post( '/user', function( req, res ) {
 } );
 
 /**
- * $B%f!<%6!<>pJs99?7(BAPI
+ * ユーザー情報更新API
  */
 app.put( '/user/:id', function( req, res ) {
 
