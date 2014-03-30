@@ -33,11 +33,37 @@ module.exports = {
     },
 
     /**
+     * ユーザー情報取得
+     */
+    get: function( id, db, collectionUsers, cb_onSuccess ) {
+
+        var targetUser = collectionUsers.find( { '_id': Number( id ) } );
+        
+        targetUser.toArray( function( err, docs ) {
+
+            if ( err ) {
+
+                db.close();
+                throw err;
+            }
+
+            if ( docs.lenght === 0 ) {
+
+                cb_onSuccess( {} );
+            }
+            else {
+
+                cb_onSuccess( docs[0] );
+            }
+        } );
+    },
+
+    /**
      * 一番最新のユーザー情報を取得する
      */
     getLatestUser: function( db, collectionUsers, cb_onSuccess ) {
 
-        var latest = collectionUsers.find( {} ).sort( {_id: -1} ).limit( 1 );
+        var latest = collectionUsers.find( {} ).sort( { _id: -1 } ).limit( 1 );
 
         latest.toArray( function( err, docs ) {
 

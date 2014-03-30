@@ -1,6 +1,7 @@
 var express = require( 'express' ),
     app     = express(),
 
+    onGetUser  = require( './apis/onGetUser' ),
     onPostUser = require( './apis/onPostUser' ),
     
     port = 60080;
@@ -11,11 +12,7 @@ app.use( express.bodyParser() );
 /**
  * ユーザー情報参照API
  */
-app.get( '/user/:id', function( req, res ) {
-
-    console.log( req.params );
-    console.log( '%s %s', req.method, req.url );
-} );
+app.get( '/user/:id', onGetUser );
 
 /**
  * ユーザー登録API

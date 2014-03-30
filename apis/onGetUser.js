@@ -2,15 +2,15 @@ var connectHelper = require( '../libs/mongo/connectHelper' ),
     usersClient   = require( '../libs/mongo/usersClient' );
 
 /**
- * ユーザー登録API
+ * ユーザー参照API
  * @param req expressのRequest
  * @param res expressのResponse
  */
 module.exports = function( req, res ) {
 
-    var success = function( userid ) {
+    var success = function( userInfo) {
 
-            res.send( 200, { _id: userid } );
+            res.send( 200, userInfo );
         },
         
         error = function( code ) {
@@ -31,12 +31,12 @@ module.exports = function( req, res ) {
         
         validate = function() {
 
-            if ( req.body.name === undefined || req.body.name === '' ) {
+            if ( req.params.id === undefined || req.params.id === '' ) {
 
                 return false;
             }
 
-            if ( req.body.appid === undefined || req.body.appid === '' ) {
+            if ( req.query.appid === undefined || req.query.appid === '' ) {
                 // とりあえずappidは空じゃなきゃOK
                 return false;
             }
@@ -44,33 +44,34 @@ module.exports = function( req, res ) {
             return true;
         },
 
-        set = function() {
+        get = function() {
 
             connectHelper( function( db ) {
 
                 var users = db.collection( 'users' );
 
-                usersClient.insert( req.body.name, db, users, function( userInfo ) {
+                usersClient.get( req.params.id, db, users, function( userInfo ) {
 
-                    success( userInfo._id );
+                    success( userInfo );
                 } );
             } );
         },
         
         main = function() {
 
-            console.log( req.body );
+            console.log( req.params.id );
+            console.log( req.query );
             console.log( '%s %s', req.method, req.url );
 
             // バリデーション
-            if ( validate( req.body ) === false ) {
+            if ( validate() === false ) {
 
                 error( 400 );
                 return ;
             }
 
-            // dbに登録
-            set();
+            // dbから取得
+            get();
         };
 
     main();
