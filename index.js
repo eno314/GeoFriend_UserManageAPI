@@ -3,6 +3,7 @@ var express = require( 'express' ),
 
     onGetUser  = require( './apis/onGetUser' ),
     onPostUser = require( './apis/onPostUser' ),
+    onPutUser  = require( './apis/onPutUser' ),
     
     port = 60080;
 
@@ -22,11 +23,6 @@ app.post( '/user', onPostUser );
 /**
  * ユーザー情報更新API
  */
-app.put( '/user/:id', function( req, res ) {
-
-    console.log( req.params );
-    console.log( req.body );
-    console.log( '%s %s', req.method, req.url );
-} );
+app.put( '/user/:id', onPutUser );
 
 app.listen( port );

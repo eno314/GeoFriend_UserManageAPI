@@ -11,12 +11,20 @@ module.exports = {
         // idをインクリメントするために最新のユーザーを取得
         this.getLatestUser( db, collectionUsers, function( userInfo )  {
 
+            var userid = 1;
+
+            if ( userInfo != undefined ) {
+
+                userid = userInfo._id + 1;
+            }
+
+            // 初回登録は名前しか入力しない
             var insertUserInfo = {
-                    _id    : userInfo._id + 1,
+                    _id    : userid,
                     name   : name,
                     iconUrl: '',
                     tweet  : '',
-                    others : []
+                    others : {}
                 };
 
             collectionUsers.insert( insertUserInfo, function( err, docs ) {
@@ -47,14 +55,61 @@ module.exports = {
                 throw err;
             }
 
+            console.log( 'success get !!!! result ->' );
+            console.log( docs );
+
             if ( docs.lenght === 0 ) {
 
-                cb_onSuccess( {} );
+                cb_onSuccess();
             }
             else {
 
                 cb_onSuccess( docs[0] );
             }
+        } );
+    },
+
+    /**
+     * 対象idのユーザー情報を更新する
+     */
+    update: function( id, tag, value, db, collectionUsers, cb_onUpdated ) {
+
+        // 更新対象ユーザーがいるか確認
+        this.get( id, db, collectionUsers, function( userInfo ) {
+
+            // ユーザーが見つからなかった
+            if ( userInfo === undefined ) {
+
+                db.close();
+                cb_onUpdated( false );
+                return ;
+            }
+
+            var target  = { '_id': Number( id ) },
+                setInfo = {};
+
+            if      ( tag === 'name'    ) { setInfo = { 'name'   : value }; }
+            else if ( tag === 'iconUrl' ) { setInfo = { 'iconUrl': value }; }
+            else if ( tag === 'tweet'   ) { setInfo = { 'tweet'  : value }; }
+            else {
+                // 共通項目以外はothersに入れる
+                // console.log( userInfo.others );
+                // cb_onUpdated( false );
+                // return ;
+                userInfo.others[ tag ] = value;
+                setInfo = { 'others': userInfo.others };
+            }
+
+            collectionUsers.update( target, { $set: setInfo }, function( err ) {
+
+                if ( err ) {
+
+                    db.close();
+                    throw err;
+                }
+
+                cb_onUpdated( true );
+            } );
         } );
     },
 
@@ -73,7 +128,17 @@ module.exports = {
                 throw err;
             }
 
-            cb_onSuccess( docs[0] );
+            console.log( 'success get latest user !!!! result ->' );
+            console.log( docs );
+
+            if ( docs.lenght === 0 ) {
+
+                cb_onSuccess();
+            }
+            else {
+
+                cb_onSuccess( docs[0] );
+            }
         } );
     }
 };
