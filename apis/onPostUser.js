@@ -28,7 +28,7 @@ module.exports = function( req, res ) {
                     break;
             }
 
-            res.send( 500, { error: message } );
+            res.send( code, { error: message } );
         },
         
         validate = function() {
