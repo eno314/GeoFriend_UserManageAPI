@@ -24,7 +24,7 @@ module.exports = {
                     name   : name,
                     iconUrl: '',
                     tweet  : '',
-                    others : {}
+                    tags : []
                 };
 
             collectionUsers.insert( insertUserInfo, function( err, docs ) {
@@ -72,7 +72,7 @@ module.exports = {
     /**
      * 対象idのユーザー情報を更新する
      */
-    update: function( id, tag, value, db, collectionUsers, cb_onUpdated ) {
+    update: function( id, key, value, db, collectionUsers, cb_onUpdated ) {
 
         // 更新対象ユーザーがいるか確認
         this.get( id, db, collectionUsers, function( userInfo ) {
@@ -88,16 +88,17 @@ module.exports = {
             var target  = { '_id': Number( id ) },
                 setInfo = {};
 
-            if      ( tag === 'name'    ) { setInfo = { 'name'   : value }; }
-            else if ( tag === 'iconUrl' ) { setInfo = { 'iconUrl': value }; }
-            else if ( tag === 'tweet'   ) { setInfo = { 'tweet'  : value }; }
+            if      ( key === 'name'    ) { setInfo = { 'name'   : value }; }
+            else if ( key === 'iconUrl' ) { setInfo = { 'iconUrl': value }; }
+            else if ( key === 'tweet'   ) { setInfo = { 'tweet'  : value }; }
+            else if ( key === 'tags' ) {
+
+                if ( value === '' ) { setInfo = { 'tags': [] }; }
+                else                { setInfo = { 'tags': value.split( ',' ) }; }
+            }
             else {
-                // 共通項目以外はothersに入れる
-                // console.log( userInfo.others );
-                // cb_onUpdated( false );
-                // return ;
-                userInfo.others[ tag ] = value;
-                setInfo = { 'others': userInfo.others };
+                cb_onUpdated( false );
+                return ;
             }
 
             collectionUsers.update( target, { $set: setInfo }, function( err ) {

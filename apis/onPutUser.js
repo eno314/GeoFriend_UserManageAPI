@@ -39,11 +39,17 @@ module.exports = function( req, res ) {
         validate = function() {
 
             if ( req.params.id  === undefined || req.params.id  === '' ) { return false; }
-            if ( req.body.tag   === undefined || req.body.tag   === '' ) { return false; }
-            if ( req.body.value === undefined || req.body.value === '' ) { return false; }
+            if ( req.body.key   === undefined || req.body.key   === '' ) { return false; }
+            // valueは空文字を許可する
+            if ( req.body.value === undefined ) { return false; }
             if ( req.body.appid === undefined || req.body.appid === '' ) { return false; }
 
-            return true;
+            if ( req.body.key === 'name'    ) { return true; }
+            if ( req.body.key === 'iconUrl' ) { return true; }
+            if ( req.body.key === 'tweet'   ) { return true; }
+            if ( req.body.key === 'tags'    ) { return true; }
+
+            return false;
         },
 
         update = function() {
@@ -52,10 +58,10 @@ module.exports = function( req, res ) {
 
                 var users = db.collection( 'users' ),
                     id    = req.params.id,
-                    tag   = req.body.tag,
+                    key   = req.body.key,
                     value = req.body.value;
 
-                usersClient.update( id, tag, value, db, users, function( result ) {
+                usersClient.update( id, key, value, db, users, function( result ) {
 
                     success( result );
                 } );
